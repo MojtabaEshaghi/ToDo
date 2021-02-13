@@ -1,21 +1,32 @@
 package com.duke.todo.ui.add
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.duke.todo.R
+import com.duke.todo.databinding.FragmentAddBinding
 
 class AddFragment : Fragment() {
+    private var _binding: FragmentAddBinding? = null
+    private val bining get() = _binding!!
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add, container, false)
+        _binding = FragmentAddBinding.inflate(inflater, container, false)
+        val view = bining.root
+
+
+
+
+        setHasOptionsMenu(true)
+        return view
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.add_frgment_menu, menu)
     }
 
 
