@@ -6,16 +6,16 @@ import com.duke.todo.data.db.entity.ToDoData
 
 @Database(entities = [ToDoData::class], version = 1, exportSchema = false)
 @TypeConverters(PrioritiesConverter::class)
-abstract class MYDatabase : RoomDatabase() {
+abstract class MyDatabase : RoomDatabase() {
 
     abstract fun toDao(): ToDoDao
 
 
-    companion object {
+    /*companion object {
         @Volatile
-        private var INSTANCE: MYDatabase? = null
+        private var INSTANCE: MyDatabase? = null
 
-        fun getDataBase(context: Context): MYDatabase {
+        fun getDataBase(context: Context): MyDatabase {
             val tmpInstance = INSTANCE
             if (tmpInstance != null) {
                 return tmpInstance
@@ -23,7 +23,7 @@ abstract class MYDatabase : RoomDatabase() {
             synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    MYDatabase::class.java,
+                    MyDatabase::class.java,
                     "todo_db"
                 ).build()
 
@@ -36,7 +36,7 @@ abstract class MYDatabase : RoomDatabase() {
 
         }
 
-    }
+    }*/
 
 
 }

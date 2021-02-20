@@ -1,32 +1,60 @@
 package com.duke.todo.data.viewModel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.duke.todo.data.db.MYDatabase
+import com.duke.todo.data.db.entity.Priorities
 import com.duke.todo.data.db.entity.ToDoData
 import com.duke.todo.data.repository.ToDoRepository
-import kotlinx.coroutines.Dispatchers
+import com.duke.todo.ui.add.AddListener
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ToDoViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) :
+    ViewModel() {
 
-    private val todoDao = MYDatabase.getDataBase(application).toDao()
-    private val repository: ToDoRepository
-    private val geAllData: LiveData<List<ToDoData>>
+    var addListener: AddListener? = null
+    var title: String? = null
+    var description: String? = null
+    var priorites: String? = null
+
+    fun insertData() {
+        addListener?.onStarted()
+
+        if ((title.isNullOrEmpty()) || (description.isNullOrEmpty()) || (priorites.isNullOrEmpty())) {
+            addListener?.onFailure("all fields is requires")
+
+        } else {
+            val data = ToDoData(
+                0,
+                title!!,
+                description!!,
+                parsePriority(priorites!!)
+            )
+
+            viewModelScope.launch {
+                repository.insertData(data)
+                addListener?.onSuccess()
 
 
-    init {
-        repository = ToDoRepository(todoDao)
-        geAllData = repository.getAllData
-    }
-
-
-    fun insertData(toDoData: ToDoData) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.insertData(toDoData)
+            }
         }
+
+
     }
+
+    private fun parsePriority(inputs: String): Priorities {
+        return when (inputs) {
+
+            "High Priorities" -> Priorities.HIGH
+            "Medium Priorities" -> Priorities.MEDIUM
+            "Low Priorities" -> Priorities.LOW
+            else -> Priorities.LOW
+
+        }
+
+    }
+
 
 }
