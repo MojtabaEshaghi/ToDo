@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.duke.todo.R
 import com.duke.todo.data.viewModel.ToDoViewModel
 import com.duke.todo.databinding.FragmentAddBinding
-import com.duke.todo.utils.sToast
+import com.duke.todo.utils.eToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,7 +45,7 @@ class AddFragment : Fragment(), AddListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         if (item.itemId == R.id.menu_add) {
-            Log.i(TAG, "onOptionsItemSelected: 😊")
+
 
             todoViewModel.title = bining.edtTitleAddFr.text.toString()
             todoViewModel.description = bining.edtDesAddFr.text.toString()
@@ -61,7 +61,7 @@ class AddFragment : Fragment(), AddListener {
     }
 
     override fun onStarted() {
-        Log.i(TAG, "onStarted: ")
+
     }
 
     override fun onSuccess() {
@@ -69,7 +69,7 @@ class AddFragment : Fragment(), AddListener {
     }
 
     override fun onFailure(msg: String) {
-        sToast(msg, requireContext())
+        eToast(msg, requireContext())
     }
 
 

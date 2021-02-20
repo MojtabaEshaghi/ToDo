@@ -23,7 +23,7 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
         addListener?.onStarted()
 
         if ((title.isNullOrEmpty()) || (description.isNullOrEmpty()) || (priorites.isNullOrEmpty())) {
-            addListener?.onFailure("all fields is requires")
+            addListener?.onFailure(" تمامی فیلدها باید پر بشوند")
 
         } else {
             val data = ToDoData(
