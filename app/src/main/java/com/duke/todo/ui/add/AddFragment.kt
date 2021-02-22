@@ -29,8 +29,7 @@ class AddFragment : Fragment(), AddListener {
 
         todoViewModel = ViewModelProvider(this).get(ToDoViewModel::class.java)
         todoViewModel.addListener = this
-
-
+        bining.spinnerPrioritiesAddFr.onItemSelectedListener = todoViewModel.SpinnerListener
 
 
         setHasOptionsMenu(true)
@@ -65,7 +64,7 @@ class AddFragment : Fragment(), AddListener {
     }
 
     override fun onSuccess() {
-      findNavController().navigate(R.id.action_addFragment_to_listFragment)
+        findNavController().navigate(R.id.action_addFragment_to_listFragment)
     }
 
     override fun onFailure(msg: String) {
