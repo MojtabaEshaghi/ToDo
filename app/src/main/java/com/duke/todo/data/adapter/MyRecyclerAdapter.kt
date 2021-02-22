@@ -13,7 +13,7 @@ import com.duke.todo.databinding.ItemRecyclerBinding
 
 class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyReVh>() {
 
-    var list = emptyList<ToDoData>()
+    private var list = emptyList<ToDoData>()
 
     class MyReVh(val binding: ItemRecyclerBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -68,6 +68,11 @@ class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyReVh>() {
         }
 
 
+    }
+
+    fun setList(toDoData: List<ToDoData>) {
+        this.list = toDoData
+        notifyDataSetChanged()
     }
 
 

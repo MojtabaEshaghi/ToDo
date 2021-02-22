@@ -1,12 +1,10 @@
 package com.duke.todo.data.viewModel
 
-import android.content.Context
 import android.view.View
-import android.widget.Adapter
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.duke.todo.R
@@ -14,8 +12,8 @@ import com.duke.todo.data.db.entity.Priorities
 import com.duke.todo.data.db.entity.ToDoData
 import com.duke.todo.data.repository.ToDoRepository
 import com.duke.todo.ui.add.AddListener
+import com.duke.todo.ui.list.ListListener
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,6 +22,7 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
     ViewModel() {
 
     var addListener: AddListener? = null
+    var listListener: ListListener? = null
     var title: String? = null
     var description: String? = null
     var priorites: String? = null
@@ -48,6 +47,20 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
 
 
             }
+        }
+
+
+    }
+
+    fun getAllData() {
+        listListener?.onStarted()
+
+        val res: LiveData<List<ToDoData>>? = repository.getAllData
+        if (res?.value.isNullOrEmpty()) {
+
+            listListener?.onSuccess(res!!)
+        } else {
+            listListener?.onFailure()
         }
 
 
