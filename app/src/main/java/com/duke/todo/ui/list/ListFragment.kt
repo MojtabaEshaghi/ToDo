@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,28 +20,26 @@ import dagger.hilt.android.AndroidEntryPoint
 class ListFragment : Fragment(), ListListener {
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
-    private lateinit var listAdpater: MyRecyclerAdapter
-    private lateinit var todoViewMdoel: ToDoViewModel
+    private lateinit var listAdapter: MyRecyclerAdapter
+    private val todoViewModel: ToDoViewModel by activityViewModels()
+
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentListBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        listAdpater = MyRecyclerAdapter()
+        listAdapter = MyRecyclerAdapter()
 
-        todoViewMdoel = ViewModelProvider(this).get(ToDoViewModel::class.java)
-        todoViewMdoel.listListener = this
-        todoViewMdoel.getAllData()
+        todoViewModel.listListener = this
+        todoViewModel.getAllData()
 
 
-        binding.listRecyclerFr.adapter = listAdpater
+        binding.listRecyclerFr.adapter = listAdapter
         binding.listRecyclerFr.hasFixedSize()
-
-        Log.i("jojo", "onCreateView: ")
 
         binding.fabListFr.setOnClickListener {
             findNavController().navigate(R.id.action_listFragment_to_addFragment)
@@ -70,7 +69,7 @@ class ListFragment : Fragment(), ListListener {
 
     override fun onSuccess(res: LiveData<List<ToDoData>>) {
         res.observe(this, Observer {
-            listAdpater.setList(it)
+            listAdapter.setList(it)
         })
     }
 

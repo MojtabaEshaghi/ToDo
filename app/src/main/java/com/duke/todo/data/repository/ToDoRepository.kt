@@ -16,4 +16,8 @@ class ToDoRepository @Inject constructor(private val toDoDao: ToDoDao) {
     }
 
 
+    suspend fun updateData(toDoData: ToDoData) {
+        toDoDao.updateData(toDoData)
+    }
+
 }

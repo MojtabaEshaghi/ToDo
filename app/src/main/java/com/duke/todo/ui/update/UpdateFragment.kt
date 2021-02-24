@@ -3,20 +3,23 @@ package com.duke.todo.ui.update
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.duke.todo.R
-import com.duke.todo.data.db.entity.Priorities
+import com.duke.todo.data.db.entity.ToDoData
 import com.duke.todo.data.viewModel.ToDoViewModel
 import com.duke.todo.databinding.FragmentUpdateBinding
+import com.duke.todo.utils.eToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UpdateFragment : Fragment() {
+class UpdateFragment : Fragment(), UpdateListener {
     private var _bindig: FragmentUpdateBinding? = null
     private val binding get() = _bindig!!
     private val arg by navArgs<UpdateFragmentArgs>()
-    private lateinit var todoViewModel: ToDoViewModel
+    private val todoViewModel: ToDoViewModel by activityViewModels()
+    private lateinit var todoModelUpDate: ToDoData
 
 
     override fun onCreateView(
@@ -25,14 +28,19 @@ class UpdateFragment : Fragment() {
     ): View? {
         _bindig = FragmentUpdateBinding.inflate(inflater, container, false)
         val view = binding.root
-        todoViewModel = ViewModelProvider(this)[ToDoViewModel::class.java]
 
 
-
+        todoViewModel.updateListener = this
         binding.edtTitleUpdateFr.setText(arg.readToDo.title)
         binding.edtDesUpdateFr.setText(arg.readToDo.description)
         binding.spinnerPrioritiesUpdateFr.onItemSelectedListener = todoViewModel.SpinnerListener
-        binding.spinnerPrioritiesUpdateFr.setSelection(parsePriority(arg.readToDo.priorities))
+        binding.spinnerPrioritiesUpdateFr.setSelection(todoViewModel.parsePriority(arg.readToDo.priorities))
+        todoModelUpDate = ToDoData(
+            arg.readToDo.id,
+            arg.readToDo.title,
+            arg.readToDo.description,
+            arg.readToDo.priorities
+        )
 
         setHasOptionsMenu(true)
 
@@ -44,15 +52,26 @@ class UpdateFragment : Fragment() {
         inflater.inflate(R.menu.update_fragment_meun, menu)
     }
 
-    private fun parsePriority(prioritiy: Priorities): Int {
-
-        return when (prioritiy) {
-            Priorities.LOW -> 2
-            Priorities.MEDIUM -> 1
-            Priorities.HIGH -> 0
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.menu_update) {
+            todoViewModel.updateTodo(todoModelUpDate)
         }
 
 
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onStarted() {
+
+    }
+
+    override fun onSuccess() {
+
+        findNavController().navigate(R.id.action_updateFragment_to_listFragment)
+    }
+
+    override fun onFailure(s: String) {
+        eToast(s, requireContext())
     }
 
 

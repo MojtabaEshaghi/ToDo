@@ -13,7 +13,9 @@ import com.duke.todo.data.db.entity.ToDoData
 import com.duke.todo.data.repository.ToDoRepository
 import com.duke.todo.ui.add.AddListener
 import com.duke.todo.ui.list.ListListener
+import com.duke.todo.ui.update.UpdateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,6 +25,7 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
 
     var addListener: AddListener? = null
     var listListener: ListListener? = null
+    var updateListener: UpdateListener? = null
     var title: String? = null
     var description: String? = null
     var priorites: String? = null
@@ -55,16 +58,41 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
     fun getAllData() {
         listListener?.onStarted()
 
-        val res: LiveData<List<ToDoData>>? = repository.getAllData
-        if (res?.value.isNullOrEmpty()) {
+        val res: LiveData<List<ToDoData>> = repository.getAllData
+        if (res.value.isNullOrEmpty()) {
 
-            listListener?.onSuccess(res!!)
+            listListener?.onSuccess(res)
         } else {
             listListener?.onFailure()
         }
 
 
     }
+
+
+    fun updateTodo(toDoData: ToDoData) {
+
+        updateListener?.onStarted()
+
+
+        if (toDoData.title.isEmpty() || toDoData.description.isEmpty()) {
+            updateListener?.onFailure("you must be enter some data")
+
+        } else {
+
+
+            viewModelScope.launch {
+
+                repository.updateData(toDoData)
+                updateListener?.onSuccess()
+            }
+
+
+        }
+
+
+    }
+
 
     private fun parsePriority(inputs: String): Priorities {
         return when (inputs) {
@@ -123,5 +151,18 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
         }
+
+
+    fun parsePriority(prioritiy: Priorities): Int {
+
+        return when (prioritiy) {
+            Priorities.LOW -> 2
+            Priorities.MEDIUM -> 1
+            Priorities.HIGH -> 0
+        }
+
+
+    }
+
 
 }
