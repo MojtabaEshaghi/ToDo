@@ -1,15 +1,15 @@
 package com.duke.todo.data.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.duke.todo.R
 import com.duke.todo.data.db.entity.Priorities
 import com.duke.todo.data.db.entity.ToDoData
 import com.duke.todo.databinding.ItemRecyclerBinding
+import com.duke.todo.ui.list.ListFragmentDirections
 
 class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyReVh>() {
 
@@ -34,14 +34,19 @@ class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyReVh>() {
 
         holder.binding.txtDescriptionItemRecycler.text = list[position].description
         holder.binding.txtTitleItemRecycler.text = list[position].title
-        val priority = list[position].priorities
+        holder.binding.rowLayout.setOnClickListener {
 
-        when (priority) {
+            val acction = ListFragmentDirections.actionListFragmentToUpdateFragment(list[position])
+            holder.binding.rowLayout.findNavController()
+                .navigate(acction)
+        }
+
+        when (list[position].priorities) {
 
             Priorities.HIGH -> {
                 holder.binding.priorityIndicatorItemRecycler.setCardBackgroundColor(
                     ContextCompat.getColor(
-                        holder.itemView.context,
+                        holder.binding.root.context,
                         R.color.red
                     )
                 )
@@ -50,7 +55,7 @@ class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyReVh>() {
             Priorities.MEDIUM -> {
                 holder.binding.priorityIndicatorItemRecycler.setCardBackgroundColor(
                     ContextCompat.getColor(
-                        holder.itemView.context,
+                        holder.binding.root.context,
                         R.color.yellow
                     )
                 )

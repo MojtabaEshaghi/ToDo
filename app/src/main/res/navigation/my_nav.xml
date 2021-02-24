@@ -49,5 +49,8 @@
             app:destination="@id/listFragment"
             app:enterAnim="@anim/from_right"
             app:exitAnim="@anim/to_left" />
+        <argument
+            android:name="read_toDo"
+            app:argType="com.duke.todo.data.db.entity.ToDoData" />
     </fragment>
 </navigation>
