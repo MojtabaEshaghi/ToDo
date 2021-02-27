@@ -3,6 +3,7 @@ package com.duke.todo.ui.list
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
@@ -12,6 +13,7 @@ import com.duke.todo.data.adapter.MyRecyclerAdapter
 import com.duke.todo.data.db.entity.ToDoData
 import com.duke.todo.data.viewModel.ToDoViewModel
 import com.duke.todo.databinding.FragmentListBinding
+import com.duke.todo.utils.eToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,7 +36,12 @@ class ListFragment : Fragment(), ListListener {
 
         todoViewModel.listListener = this
         todoViewModel.getAllData()
-
+        todoViewModel.isEmptyDb.observe(viewLifecycleOwner,{
+            if (it) {
+                todoViewModel.listListener?.onSuccessDeletedAll()
+            }
+        })
+        Log.i(TAG, "onCreateView: "+todoViewModel.isEmptyDb.value)
 
         binding.listRecyclerFr.adapter = listAdapter
         binding.listRecyclerFr.hasFixedSize()
@@ -57,6 +64,30 @@ class ListFragment : Fragment(), ListListener {
 
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when(item.itemId){
+            R.id.menu_delete_all-> confirmDeleteAllItemDelete()
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun confirmDeleteAllItemDelete() {
+
+        val builer = AlertDialog.Builder(requireContext())
+        builer.setPositiveButton("yes") { _, _ ->
+            todoViewModel.deleteAllItem()
+            eToast("deleted all Items  ", requireContext())
+        }
+        builer.setNegativeButton("No") { _, _ -> }
+        builer.setTitle(" Delete All Items ? ")
+        builer.setMessage(" Are you sure you delete All Items ? ")
+        builer.create().show()
+
+
+    }
+
     override fun onDestroy() {
         Log.i(TAG, "onDestroy: ")
         _binding = null
@@ -64,14 +95,18 @@ class ListFragment : Fragment(), ListListener {
     }
 
     override fun onStarted() {
+
         Log.i(TAG, "onStarted: ")
 
     }
 
     override fun onSuccess(res: LiveData<List<ToDoData>>) {
-        Log.i(TAG, "onSuccess: ")
+
         res.observe(this, {
+
             listAdapter.setList(it)
+
+
         })
     }
 
@@ -81,6 +116,12 @@ class ListFragment : Fragment(), ListListener {
         binding.imgEmptyListFr.visibility = View.VISIBLE
         binding.txtEmptyListFr.visibility = View.VISIBLE
 
+    }
+
+    override fun onSuccessDeletedAll() {
+        binding.listRecyclerFr.visibility = View.GONE
+        binding.imgEmptyListFr.visibility = View.VISIBLE
+        binding.txtEmptyListFr.visibility = View.VISIBLE
     }
 
 

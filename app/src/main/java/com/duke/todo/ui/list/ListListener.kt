@@ -10,7 +10,7 @@ interface ListListener {
     fun onStarted()
     fun onSuccess(res: LiveData<List<ToDoData>>)
     fun onFailure()
-
+    fun onSuccessDeletedAll()
 
 
 }
