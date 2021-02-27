@@ -20,4 +20,9 @@ class ToDoRepository @Inject constructor(private val toDoDao: ToDoDao) {
         toDoDao.updateData(toDoData)
     }
 
+
+    suspend fun deleteSingleItem(toDoData: ToDoData) {
+        toDoDao.deleteSingleItem(toDoData)
+    }
+
 }

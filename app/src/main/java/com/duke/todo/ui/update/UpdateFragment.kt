@@ -2,6 +2,7 @@ package com.duke.todo.ui.update
 
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -11,6 +12,7 @@ import com.duke.todo.data.db.entity.ToDoData
 import com.duke.todo.data.viewModel.ToDoViewModel
 import com.duke.todo.databinding.FragmentUpdateBinding
 import com.duke.todo.utils.eToast
+import com.duke.todo.utils.sToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -48,17 +50,56 @@ class UpdateFragment : Fragment(), UpdateListener {
 
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.update_fragment_meun, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.menu_update) {
+        when (item.itemId) {
+
+            R.id.menu_delete -> confirmDeleteItem()
+            R.id.menu_update -> updateTodo()
+
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun updateTodo() {
+
+        if (!(binding.edtTitleUpdateFr.text.toString()
+                .isEmpty()) && !(binding.edtDesUpdateFr.text.toString().isEmpty())
+        ) {
+            todoModelUpDate = ToDoData(
+                arg.readToDo.id,
+                binding.edtTitleUpdateFr.text.toString(),
+                binding.edtDesUpdateFr.text.toString(),
+                todoViewModel.parsePriority(binding.spinnerPrioritiesUpdateFr.selectedItem.toString())
+            )
+
+
             todoViewModel.updateTodo(todoModelUpDate)
+            sToast("item is updated",requireContext())
+
+
         }
 
 
-        return super.onOptionsItemSelected(item)
+    }
+
+    private fun confirmDeleteItem() {
+
+        val builer = AlertDialog.Builder(requireContext())
+        builer.setPositiveButton("yes") { _, _ ->
+            todoViewModel.deleteSingleItem(todoModelUpDate)
+            eToast("deleted ${todoModelUpDate.title} ", requireContext())
+        }
+        builer.setNegativeButton("No") { _, _ -> }
+        builer.setTitle("Delete ${todoModelUpDate.title} ? ")
+        builer.setMessage("Are you sure you delete ${todoModelUpDate.title} ? ")
+        builer.create().show()
+
+
     }
 
     override fun onStarted() {

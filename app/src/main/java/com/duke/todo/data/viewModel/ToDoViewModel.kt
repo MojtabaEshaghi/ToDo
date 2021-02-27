@@ -1,10 +1,12 @@
 package com.duke.todo.data.viewModel
 
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.duke.todo.R
@@ -17,6 +19,7 @@ import com.duke.todo.ui.update.UpdateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,9 +29,11 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
     var addListener: AddListener? = null
     var listListener: ListListener? = null
     var updateListener: UpdateListener? = null
+    private  val TAG = "jojo"
     var title: String? = null
     var description: String? = null
     var priorites: String? = null
+    private var mGetAllData: MediatorLiveData<List<ToDoData>> = MediatorLiveData()
 
     fun insertData() {
         addListener?.onStarted()
@@ -59,13 +64,7 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
         listListener?.onStarted()
 
         val res: LiveData<List<ToDoData>> = repository.getAllData
-        if (res.value.isNullOrEmpty()) {
-
-            listListener?.onSuccess(res)
-        } else {
-            listListener?.onFailure()
-        }
-
+        listListener?.onSuccess(res)
 
     }
 
@@ -79,9 +78,13 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
             updateListener?.onFailure("you must be enter some data")
 
         } else {
+            Log.i(TAG, "updateTodo: "+toDoData.title)
+            Log.i(TAG, "updateTodo: "+toDoData.priorities)
+            Log.i(TAG, "updateTodo: "+toDoData.description)
+            Log.i(TAG, "updateTodo: "+toDoData.id)
 
 
-            viewModelScope.launch {
+            viewModelScope.launch{
 
                 repository.updateData(toDoData)
                 updateListener?.onSuccess()
@@ -94,7 +97,25 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
     }
 
 
-    private fun parsePriority(inputs: String): Priorities {
+    fun deleteSingleItem(toDoData: ToDoData) {
+
+        updateListener?.onStarted()
+
+        try {
+            viewModelScope.launch {
+                repository.deleteSingleItem(toDoData)
+                updateListener?.onSuccess()
+            }
+        }catch (e:Exception){
+            updateListener?.onFailure("someThing Wrong")
+        }
+
+
+
+    }
+
+
+    public fun parsePriority(inputs: String): Priorities {
         return when (inputs) {
 
             "High Priorities" -> Priorities.HIGH

@@ -6,8 +6,6 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.duke.todo.R
 import com.duke.todo.data.adapter.MyRecyclerAdapter
@@ -20,9 +18,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class ListFragment : Fragment(), ListListener {
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
+    private val TAG = "jojo"
     private lateinit var listAdapter: MyRecyclerAdapter
     private val todoViewModel: ToDoViewModel by activityViewModels()
-
 
 
     override fun onCreateView(
@@ -46,6 +44,7 @@ class ListFragment : Fragment(), ListListener {
         }
 
 
+
         setHasOptionsMenu(true)
 
         return view
@@ -59,21 +58,25 @@ class ListFragment : Fragment(), ListListener {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        Log.i(TAG, "onDestroy: ")
         _binding = null
+        super.onDestroy()
     }
 
     override fun onStarted() {
+        Log.i(TAG, "onStarted: ")
 
     }
 
     override fun onSuccess(res: LiveData<List<ToDoData>>) {
-        res.observe(this, Observer {
+        Log.i(TAG, "onSuccess: ")
+        res.observe(this, {
             listAdapter.setList(it)
         })
     }
 
     override fun onFailure() {
+        Log.i(TAG, "onFailure: ")
         binding.listRecyclerFr.visibility = View.GONE
         binding.imgEmptyListFr.visibility = View.VISIBLE
         binding.txtEmptyListFr.visibility = View.VISIBLE

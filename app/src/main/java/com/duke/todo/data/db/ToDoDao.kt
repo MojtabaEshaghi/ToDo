@@ -1,10 +1,7 @@
 package com.duke.todo.data.db
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.duke.todo.data.db.entity.ToDoData
 
 @Dao
@@ -20,6 +17,11 @@ interface ToDoDao {
 
     @Update
     suspend fun updateData(toDoData: ToDoData)
+
+
+    @Delete
+    suspend fun deleteSingleItem(toDoData: ToDoData)
+
 
 
 

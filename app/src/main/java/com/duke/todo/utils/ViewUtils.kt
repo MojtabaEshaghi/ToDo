@@ -12,3 +12,14 @@ fun eToast(msg: String, context: Context) {
     md.show()
 
 }
+
+
+
+fun sToast(msg: String, context: Context) {
+
+
+    val md: MDToast = MDToast.makeText(context, msg, Toast.LENGTH_SHORT, MDToast.TYPE_SUCCESS)
+
+    md.show()
+
+}
