@@ -1,5 +1,7 @@
 package com.duke.todo.data.adapter
 
+import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -10,8 +12,10 @@ import com.duke.todo.data.db.entity.Priorities
 import com.duke.todo.data.db.entity.ToDoData
 import com.duke.todo.databinding.ItemRecyclerBinding
 import com.duke.todo.ui.list.ListFragmentDirections
+import com.duke.todo.utils.Constance
 
-class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyReVh>() {
+
+class MyRecyclerAdapter(val const: Constance) : RecyclerView.Adapter<MyRecyclerAdapter.MyReVh>() {
 
     private var list = emptyList<ToDoData>()
 
@@ -30,6 +34,7 @@ class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyReVh>() {
 
     override fun getItemCount(): Int = list.size
 
+    @SuppressWarnings("ResourceAsColor")
     override fun onBindViewHolder(holder: MyReVh, position: Int) {
 
         holder.binding.txtDescriptionItemRecycler.text = list[position].description
@@ -41,32 +46,24 @@ class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyReVh>() {
                 .navigate(acction)
         }
 
-        when (list[position].priorities) {
 
+        when (list[position].priorities) {
             Priorities.HIGH -> {
                 holder.binding.priorityIndicatorItemRecycler.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        holder.binding.root.context,
-                        R.color.red
-                    )
+                    getColor(holder.binding.root.context, R.color.red)
                 )
             }
 
             Priorities.MEDIUM -> {
                 holder.binding.priorityIndicatorItemRecycler.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        holder.binding.root.context,
-                        R.color.yellow
-                    )
+                    getColor(holder.binding.root.context, R.color.yellow)
+
                 )
             }
 
             Priorities.LOW -> {
                 holder.binding.priorityIndicatorItemRecycler.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        holder.itemView.context,
-                        R.color.green
-                    )
+                    getColor(holder.binding.root.context, R.color.green)
                 )
             }
 
@@ -79,6 +76,13 @@ class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyReVh>() {
         this.list = toDoData
         notifyDataSetChanged()
     }
+    fun getColor(context: Context, id: Int): Int {
 
+        return if (const == Constance.HIGHERMOBILE) {
+            ContextCompat.getColor(context, id)
+        } else {
+            context.resources.getColor(id)
+        }
+    }
 
 }

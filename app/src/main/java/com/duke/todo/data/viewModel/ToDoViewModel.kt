@@ -6,7 +6,6 @@ import android.widget.AdapterView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.duke.todo.R
@@ -16,6 +15,7 @@ import com.duke.todo.data.repository.ToDoRepository
 import com.duke.todo.ui.add.AddListener
 import com.duke.todo.ui.list.ListListener
 import com.duke.todo.ui.update.UpdateListener
+import com.duke.todo.utils.Constance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,6 +31,7 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
     var title: String? = null
     var description: String? = null
     var priorites: String? = null
+    lateinit var typeMobileBasedVersion: Constance
 
 
     fun insertData() {
@@ -112,10 +113,6 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
     }
 
 
-    fun isDbEmpty(list: List<ToDoData>) {
-        Log.i(TAG, "isDbEmpty: "+list.isNullOrEmpty())
-
-    }
 
 
     fun deleteAllItem() {
@@ -201,6 +198,20 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
             Priorities.MEDIUM -> 1
             Priorities.HIGH -> 0
         }
+
+
+    }
+
+
+    fun whichMobile() {
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            typeMobileBasedVersion = Constance.HIGHERMOBILE
+        } else {
+            typeMobileBasedVersion = Constance.LOWERMOBOILE
+
+        }
+
 
 
     }

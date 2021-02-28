@@ -36,13 +36,13 @@ class ListFragment : Fragment(), ListListener {
         val view = binding.root
 
 
-        listAdapter = MyRecyclerAdapter()
 
         todoViewModel.listListener = this
         todoViewModel.getAllData()
+        todoViewModel.whichMobile()
 
 
-
+        listAdapter = MyRecyclerAdapter(todoViewModel.typeMobileBasedVersion)
         binding.listRecyclerFr.adapter = listAdapter
         binding.listRecyclerFr.hasFixedSize()
 
