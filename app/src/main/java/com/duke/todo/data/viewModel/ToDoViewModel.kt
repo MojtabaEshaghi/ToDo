@@ -31,7 +31,7 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
     var title: String? = null
     var description: String? = null
     var priorites: String? = null
-    var isEmptyDb: MutableLiveData<Boolean> = MutableLiveData(true)
+
 
     fun insertData() {
         addListener?.onStarted()

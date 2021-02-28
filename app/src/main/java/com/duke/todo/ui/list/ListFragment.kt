@@ -1,8 +1,10 @@
 package com.duke.todo.ui.list
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -15,6 +17,7 @@ import com.duke.todo.data.viewModel.ToDoViewModel
 import com.duke.todo.databinding.FragmentListBinding
 import com.duke.todo.utils.eToast
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class ListFragment : Fragment(), ListListener {
@@ -32,19 +35,21 @@ class ListFragment : Fragment(), ListListener {
         _binding = FragmentListBinding.inflate(inflater, container, false)
         val view = binding.root
 
+
         listAdapter = MyRecyclerAdapter()
 
         todoViewModel.listListener = this
         todoViewModel.getAllData()
-        todoViewModel.isEmptyDb.observe(viewLifecycleOwner,{
-            if (it) {
-                todoViewModel.listListener?.onSuccessDeletedAll()
-            }
-        })
-        Log.i(TAG, "onCreateView: "+todoViewModel.isEmptyDb.value)
+
+
 
         binding.listRecyclerFr.adapter = listAdapter
         binding.listRecyclerFr.hasFixedSize()
+
+
+
+        hideKeyboard()
+
 
         binding.fabListFr.setOnClickListener {
             findNavController().navigate(R.id.action_listFragment_to_addFragment)
@@ -57,6 +62,18 @@ class ListFragment : Fragment(), ListListener {
         return view
     }
 
+    private fun hideKeyboard() {
+
+        val view: View? = activity?.currentFocus
+        if (view != null) {
+            val imm =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            imm!!.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+
+
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.list_frgment_menu, menu)
@@ -66,8 +83,8 @@ class ListFragment : Fragment(), ListListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        when(item.itemId){
-            R.id.menu_delete_all-> confirmDeleteAllItemDelete()
+        when (item.itemId) {
+            R.id.menu_delete_all -> confirmDeleteAllItemDelete()
         }
 
         return super.onOptionsItemSelected(item)
@@ -104,6 +121,9 @@ class ListFragment : Fragment(), ListListener {
 
         res.observe(this, {
 
+            if (it.isEmpty()) {
+                onFailure()
+            }
             listAdapter.setList(it)
 
 
