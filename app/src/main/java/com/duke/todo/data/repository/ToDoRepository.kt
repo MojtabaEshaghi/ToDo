@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ToDoRepository @Inject constructor(private val toDoDao: ToDoDao) {
 
 
-    val getAllData: LiveData<List<ToDoData>> = toDoDao.getAllData()
+    val getAllData: LiveData<List<ToDoData>>     = toDoDao.getAllData()
 
 
     suspend fun insertData(toDoData: ToDoData) {

@@ -6,6 +6,7 @@ import android.widget.AdapterView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.duke.todo.R
@@ -32,6 +33,7 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
     var description: String? = null
     var priorites: String? = null
     lateinit var typeMobileBasedVersion: Constance
+    val emptyDataBase: MutableLiveData<Boolean> = MutableLiveData(true)
 
 
     fun insertData() {
@@ -59,14 +61,15 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
 
     }
 
-    fun getAllData() {
-        listListener?.onStarted()
 
-        val res: LiveData<List<ToDoData>> = repository.getAllData
-        listListener?.onSuccess(res)
+    fun checkIsDataBaseEmpty(list: List<ToDoData>) {
 
+        if (list.size == 0) {
+            emptyDataBase.postValue(true)
+        } else {
+            emptyDataBase.postValue(false)
+        }
     }
-
 
     fun updateTodo(toDoData: ToDoData) {
 
@@ -111,8 +114,6 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
 
 
     }
-
-
 
 
     fun deleteAllItem() {
@@ -213,6 +214,16 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
         }
 
 
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.i(TAG, "onCleared: ")
+    }
+
+    fun getAllData(): LiveData<List<ToDoData>> {
+
+        return repository.getAllData
 
     }
 

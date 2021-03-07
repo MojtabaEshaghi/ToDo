@@ -8,11 +8,9 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import com.duke.todo.R
 import com.duke.todo.data.adapter.MyRecyclerAdapter
-import com.duke.todo.data.db.entity.ToDoData
 import com.duke.todo.data.viewModel.ToDoViewModel
 import com.duke.todo.databinding.FragmentListBinding
 import com.duke.todo.utils.eToast
@@ -25,7 +23,7 @@ class ListFragment : Fragment(), ListListener {
     private val binding get() = _binding!!
     private val TAG = "jojo"
     private lateinit var listAdapter: MyRecyclerAdapter
-    private val todoViewModel: ToDoViewModel by activityViewModels()
+    val todoViewModel: ToDoViewModel by activityViewModels()
 
 
     override fun onCreateView(
@@ -38,6 +36,7 @@ class ListFragment : Fragment(), ListListener {
 
 
         todoViewModel.listListener = this
+        Log.i(TAG, "onCreateView: ")
         todoViewModel.getAllData()
         todoViewModel.whichMobile()
 
@@ -45,6 +44,22 @@ class ListFragment : Fragment(), ListListener {
         listAdapter = MyRecyclerAdapter(todoViewModel.typeMobileBasedVersion)
         binding.listRecyclerFr.adapter = listAdapter
         binding.listRecyclerFr.hasFixedSize()
+
+        todoViewModel.getAllData().observe(viewLifecycleOwner, {
+            Log.i(TAG, "onCreateView: "+it.size)
+            todoViewModel.checkIsDataBaseEmpty(it)
+
+
+        })
+
+        todoViewModel.emptyDataBase.observe(viewLifecycleOwner,{
+            if (it){
+                viewGone()
+            }else{
+                viewVisible()
+            }
+
+        })
 
 
 
@@ -60,6 +75,14 @@ class ListFragment : Fragment(), ListListener {
         setHasOptionsMenu(true)
 
         return view
+    }
+
+    private fun viewVisible() {
+        Log.i(TAG, "viewVisible: ")
+    }
+
+    private fun viewGone() {
+        Log.i(TAG, "viewGone: ")
     }
 
     private fun hideKeyboard() {
@@ -92,43 +115,33 @@ class ListFragment : Fragment(), ListListener {
 
     private fun confirmDeleteAllItemDelete() {
 
-        val builer = AlertDialog.Builder(requireContext())
-        builer.setPositiveButton("yes") { _, _ ->
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setPositiveButton("yes") { _, _ ->
             todoViewModel.deleteAllItem()
             eToast("deleted all Items  ", requireContext())
         }
-        builer.setNegativeButton("No") { _, _ -> }
-        builer.setTitle(" Delete All Items ? ")
-        builer.setMessage(" Are you sure you delete All Items ? ")
-        builer.create().show()
+        builder.setNegativeButton("No") { _, _ -> }
+        builder.setTitle(" Delete All Items ? ")
+        builder.setMessage(" Are you sure you delete All Items ? ")
+        builder.create().show()
 
 
     }
 
     override fun onDestroy() {
-        Log.i(TAG, "onDestroy: ")
         _binding = null
         super.onDestroy()
     }
 
     override fun onStarted() {
 
-        Log.i(TAG, "onStarted: ")
 
     }
 
-    override fun onSuccess(res: LiveData<List<ToDoData>>) {
+    override fun onSuccess() {
 
-        res.observe(this, {
-
-            if (it.isEmpty()) {
-                onFailure()
-            }
-            listAdapter.setList(it)
-
-
-        })
     }
+
 
     override fun onFailure() {
         Log.i(TAG, "onFailure: ")
