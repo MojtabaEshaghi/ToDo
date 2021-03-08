@@ -1,7 +1,6 @@
 package com.duke.todo.data.adapter
 
 import android.content.Context
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -49,22 +48,15 @@ class MyRecyclerAdapter(val const: Constance) : RecyclerView.Adapter<MyRecyclerA
 
         when (list[position].priorities) {
             Priorities.HIGH -> {
-                holder.binding.priorityIndicatorItemRecycler.setCardBackgroundColor(
-                    getColor(holder.binding.root.context, R.color.red)
-                )
+                holder.binding.priorityIndicatorItemRecycler.setImageResource(R.drawable.shape_ciercle_image_view_hight)
             }
 
             Priorities.MEDIUM -> {
-                holder.binding.priorityIndicatorItemRecycler.setCardBackgroundColor(
-                    getColor(holder.binding.root.context, R.color.yellow)
-
-                )
+                holder.binding.priorityIndicatorItemRecycler.setImageResource(R.drawable.shape_ciercle_image_view_medium)
             }
 
             Priorities.LOW -> {
-                holder.binding.priorityIndicatorItemRecycler.setCardBackgroundColor(
-                    getColor(holder.binding.root.context, R.color.green)
-                )
+                holder.binding.priorityIndicatorItemRecycler.setImageResource(R.drawable.shape_ciercle_image_view_low)
             }
 
         }
@@ -76,6 +68,7 @@ class MyRecyclerAdapter(val const: Constance) : RecyclerView.Adapter<MyRecyclerA
         this.list = toDoData
         notifyDataSetChanged()
     }
+
     fun getColor(context: Context, id: Int): Int {
 
         return if (const == Constance.HIGHERMOBILE) {
