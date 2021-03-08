@@ -8,8 +8,8 @@ interface ListListener {
 
     fun onStarted()
     fun onSuccess()
-    fun onFailure()
-    fun onSuccessDeletedAll()
+    fun onFailure(message: String?)
+
 
 
 }

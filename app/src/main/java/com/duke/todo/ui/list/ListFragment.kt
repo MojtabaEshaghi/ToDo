@@ -2,7 +2,6 @@ package com.duke.todo.ui.list
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
@@ -19,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ListFragment : Fragment(), ListListener {
+
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
     private val TAG = "jojo"
@@ -36,7 +36,6 @@ class ListFragment : Fragment(), ListListener {
 
 
         todoViewModel.listListener = this
-        Log.i(TAG, "onCreateView: ")
         todoViewModel.getAllData()
         todoViewModel.whichMobile()
 
@@ -46,16 +45,16 @@ class ListFragment : Fragment(), ListListener {
         binding.listRecyclerFr.hasFixedSize()
 
         todoViewModel.getAllData().observe(viewLifecycleOwner, {
-            Log.i(TAG, "onCreateView: "+it.size)
+            listAdapter.setList(it)
             todoViewModel.checkIsDataBaseEmpty(it)
 
 
         })
 
-        todoViewModel.emptyDataBase.observe(viewLifecycleOwner,{
-            if (it){
+        todoViewModel.emptyDataBase.observe(viewLifecycleOwner, {
+            if (it) {
                 viewGone()
-            }else{
+            } else {
                 viewVisible()
             }
 
@@ -78,11 +77,15 @@ class ListFragment : Fragment(), ListListener {
     }
 
     private fun viewVisible() {
-        Log.i(TAG, "viewVisible: ")
+        binding.listRecyclerFr.visibility = View.VISIBLE
+        binding.imgEmptyListFr.visibility = View.GONE
+        binding.txtEmptyListFr.visibility = View.GONE
     }
 
     private fun viewGone() {
-        Log.i(TAG, "viewGone: ")
+        binding.listRecyclerFr.visibility = View.GONE
+        binding.imgEmptyListFr.visibility = View.VISIBLE
+        binding.txtEmptyListFr.visibility = View.VISIBLE
     }
 
     private fun hideKeyboard() {
@@ -143,19 +146,13 @@ class ListFragment : Fragment(), ListListener {
     }
 
 
-    override fun onFailure() {
-        Log.i(TAG, "onFailure: ")
-        binding.listRecyclerFr.visibility = View.GONE
-        binding.imgEmptyListFr.visibility = View.VISIBLE
-        binding.txtEmptyListFr.visibility = View.VISIBLE
-
-    }
-
-    override fun onSuccessDeletedAll() {
+    override fun onFailure(message: String?) {
         binding.listRecyclerFr.visibility = View.GONE
         binding.imgEmptyListFr.visibility = View.VISIBLE
         binding.txtEmptyListFr.visibility = View.VISIBLE
     }
+
+
 
 
 }

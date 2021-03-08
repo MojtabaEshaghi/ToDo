@@ -33,7 +33,7 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
     var description: String? = null
     var priorites: String? = null
     lateinit var typeMobileBasedVersion: Constance
-    val emptyDataBase: MutableLiveData<Boolean> = MutableLiveData(true)
+    val emptyDataBase: MutableLiveData<Boolean> = MutableLiveData()
 
 
     fun insertData() {
@@ -117,16 +117,14 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
 
 
     fun deleteAllItem() {
-        listListener?.onStarted()
-
 
         try {
             viewModelScope.launch {
                 repository.deleteAllItem()
-                listListener?.onSuccessDeletedAll()
+
             }
         } catch (e: Exception) {
-            listListener?.onFailure()
+            listListener?.onFailure(e.message)
         }
 
 
