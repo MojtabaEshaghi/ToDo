@@ -39,8 +39,8 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
     fun insertData() {
         addListener?.onStarted()
 
-        if ((title.isNullOrEmpty()) || (description.isNullOrEmpty()) || (priorites.isNullOrEmpty())) {
-            addListener?.onFailure(" تمامی فیلدها باید پر بشوند")
+        if ((title.isNullOrEmpty()) ||  (priorites.isNullOrEmpty())) {
+            addListener?.onFailure("حداقل موارد را پر کنید")
 
         } else {
             val data = ToDoData(
@@ -80,18 +80,11 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
             updateListener?.onFailure("you must be enter some data")
 
         } else {
-            Log.i(TAG, "updateTodo: " + toDoData.title)
-            Log.i(TAG, "updateTodo: " + toDoData.priorities)
-            Log.i(TAG, "updateTodo: " + toDoData.description)
-            Log.i(TAG, "updateTodo: " + toDoData.id)
-
-
             viewModelScope.launch {
 
                 repository.updateData(toDoData)
                 updateListener?.onSuccess()
             }
-
 
         }
 
