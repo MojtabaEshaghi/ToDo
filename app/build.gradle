@@ -68,6 +68,7 @@ dependencies {
 
     //ViewUtils
     implementation 'com.valdesekamdem.library:md-toast:0.9.0'
+    implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
 
 
 }

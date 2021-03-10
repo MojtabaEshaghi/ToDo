@@ -2,8 +2,10 @@ package com.duke.todo.ui.list
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -14,10 +16,11 @@ import com.duke.todo.data.viewModel.ToDoViewModel
 import com.duke.todo.databinding.FragmentListBinding
 import com.duke.todo.utils.eToast
 import dagger.hilt.android.AndroidEntryPoint
+import jp.wasabeef.recyclerview.animators.LandingAnimator
 
 
 @AndroidEntryPoint
-class ListFragment : Fragment(), ListListener {
+class ListFragment : Fragment(), ListListener, SearchView.OnQueryTextListener {
 
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
@@ -40,9 +43,12 @@ class ListFragment : Fragment(), ListListener {
         todoViewModel.whichMobile()
 
 
-        listAdapter = MyRecyclerAdapter(todoViewModel.typeMobileBasedVersion)
+        listAdapter = MyRecyclerAdapter()
+        binding.listRecyclerFr.itemAnimator = LandingAnimator().apply {
+            addDuration = 300
+        }
         binding.listRecyclerFr.adapter = listAdapter
-        binding.listRecyclerFr.hasFixedSize()
+
 
         todoViewModel.getAllData().observe(viewLifecycleOwner, {
             listAdapter.setList(it)
@@ -103,7 +109,13 @@ class ListFragment : Fragment(), ListListener {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.list_frgment_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+
+
+        val search = menu.findItem(R.id.menu_search)
+        val searchView = search.actionView as? SearchView
+        searchView?.isSubmitButtonEnabled = true
+        searchView?.setOnQueryTextListener(this)
+
 
     }
 
@@ -152,7 +164,37 @@ class ListFragment : Fragment(), ListListener {
         binding.txtEmptyListFr.visibility = View.VISIBLE
     }
 
+    override fun onQueryTextSubmit(query: String?): Boolean {
+
+        if (query != null) {
+            searchInDataBase(query)
+        }
+        return true
 
 
+    }
+
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        if (newText != null) {
+            searchInDataBase(newText)
+        }
+        return true
+    }
+
+    private fun searchInDataBase(query: String) {
+        val query1 = " %$query% "
+        todoViewModel.searchQueryInDb(query1).observe(viewLifecycleOwner, { list ->
+            Log.i(TAG, "searchInDataBase:1 ")
+            list?.let {
+                Log.i(TAG, "searchInDataBase: 2")
+                Log.i(TAG, "searchInDataBase: ${it.size}")
+                listAdapter.setList(it)
+            }
+
+
+        })
+
+    }
 
 }

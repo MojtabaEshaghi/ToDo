@@ -1,20 +1,20 @@
 package com.duke.todo.data.adapter
 
-import android.content.Context
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.duke.todo.R
 import com.duke.todo.data.db.entity.Priorities
 import com.duke.todo.data.db.entity.ToDoData
 import com.duke.todo.databinding.ItemRecyclerBinding
 import com.duke.todo.ui.list.ListFragmentDirections
-import com.duke.todo.utils.Constance
 
 
-class MyRecyclerAdapter(val const: Constance) : RecyclerView.Adapter<MyRecyclerAdapter.MyReVh>() {
+
+class MyRecyclerAdapter : RecyclerView.Adapter<MyRecyclerAdapter.MyReVh>() {
 
     private var list = emptyList<ToDoData>()
 
@@ -65,17 +65,10 @@ class MyRecyclerAdapter(val const: Constance) : RecyclerView.Adapter<MyRecyclerA
     }
 
     fun setList(toDoData: List<ToDoData>) {
+        val todoDiffUtilCallBack = ToDoDiffUtil(list, toDoData)
+        val toDoDiffResult = DiffUtil.calculateDiff(todoDiffUtilCallBack)
         this.list = toDoData
-        notifyDataSetChanged()
-    }
-
-    fun getColor(context: Context, id: Int): Int {
-
-        return if (const == Constance.HIGHERMOBILE) {
-            ContextCompat.getColor(context, id)
-        } else {
-            context.resources.getColor(id)
-        }
+        toDoDiffResult.dispatchUpdatesTo(this)
     }
 
 }

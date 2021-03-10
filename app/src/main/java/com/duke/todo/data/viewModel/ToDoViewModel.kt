@@ -39,7 +39,7 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
     fun insertData() {
         addListener?.onStarted()
 
-        if ((title.isNullOrEmpty()) ||  (priorites.isNullOrEmpty())) {
+        if ((title.isNullOrEmpty()) || (priorites.isNullOrEmpty())) {
             addListener?.onFailure("حداقل موارد را پر کنید")
 
         } else {
@@ -145,34 +145,38 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
                 position: Int,
                 id: Long
             ) {
+                try {
+                    when (position) {
 
-                when (position) {
+                        0 -> {
+                            (parent?.getChildAt(0) as TextView).setTextColor(
+                                ContextCompat.getColor(
+                                    parent.context,
+                                    R.color.red
+                                )
+                            )
+                        }
+                        1 -> {
+                            (parent?.getChildAt(0) as TextView).setTextColor(
+                                ContextCompat.getColor(
+                                    parent.context,
+                                    R.color.yellow
+                                )
+                            )
+                        }
+                        2 -> {
+                            (parent?.getChildAt(0) as TextView).setTextColor(
+                                ContextCompat.getColor(
+                                    parent.context,
+                                    R.color.green
+                                )
+                            )
+                        }
 
-                    0 -> {
-                        (parent?.getChildAt(0) as TextView).setTextColor(
-                            ContextCompat.getColor(
-                                parent.context,
-                                R.color.red
-                            )
-                        )
-                    }
-                    1 -> {
-                        (parent?.getChildAt(0) as TextView).setTextColor(
-                            ContextCompat.getColor(
-                                parent.context,
-                                R.color.yellow
-                            )
-                        )
-                    }
-                    2 -> {
-                        (parent?.getChildAt(0) as TextView).setTextColor(
-                            ContextCompat.getColor(
-                                parent.context,
-                                R.color.green
-                            )
-                        )
                     }
 
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
 
 
@@ -218,5 +222,11 @@ class ToDoViewModel @Inject constructor(private val repository: ToDoRepository) 
 
     }
 
+
+    fun searchQueryInDb(searchQuery: String): LiveData<List<ToDoData>> {
+
+        return repository.searchInDb(searchQuery)
+
+    }
 
 }
