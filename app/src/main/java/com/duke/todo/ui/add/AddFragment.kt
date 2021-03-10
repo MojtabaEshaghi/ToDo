@@ -1,8 +1,8 @@
 package com.duke.todo.ui.add
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -46,11 +46,10 @@ class AddFragment : Fragment(), AddListener {
         if (item.itemId == R.id.menu_add) {
 
 
-            todoViewModel.title = bining.edtTitleAddFr.text.toString()
-            todoViewModel.description = bining.edtDesAddFr.text.toString()
+            todoViewModel.title = (bining.edtTitleAddFr as EditText).text?.toString()
+            todoViewModel.description = (bining.edtDesAddFr as EditText).text?.toString()
             todoViewModel.priorites = bining.spinnerPrioritiesAddFr.selectedItem.toString()
             todoViewModel.insertData()
-
 
         }
 

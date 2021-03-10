@@ -39,15 +39,16 @@
         android:id="@+id/list_recycler_fr"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/item_recycler"
-        app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+        android:background="@color/light_gray"
         app:spanCount="2"
-        android:orientation="vertical"
-        />
+        tools:listitem="@layout/item_recycler" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_list_fr"
